@@ -1,0 +1,52 @@
+@charset "UTF-8";
+
+body {
+   background-color: #ddeeff;
+   color: #001122;
+   margin: auto;
+   max-width: 750px;
+   min-width: 500px;
+   width: 80%;
+}
+
+fieldset, table#gameboard {
+   float: left;
+}
+
+input.drop {
+   height: 25px;
+   width: 80px;
+}
+
+input.space {
+   height: 60px;
+   width: 80px;
+}
+
+label {
+   display: block;
+}
+
+.bigtop {
+   color: #660033;
+   font-family: Futura, "Century Gothic", Geneva, Tahoma, Verdana, Arial, sans-serif;
+   font-size: 250%;
+   font-weight: bold;
+}
+
+.hint {
+   color: #ffffff;
+   font-weight: bold;
+   text-align: center;
+}
+
+.smalltop {
+   color: #660033;
+   font-family: Garamond, Georgia, Baskerville, Palatino, "Palatino Linotype", Didot, Bodoni, serif;
+   font-size: 100%;
+   font-weight: normal;
+}
+
+::selection {
+   background-color: #ffffff;
+}

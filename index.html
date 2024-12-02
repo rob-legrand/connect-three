@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head><title>Connect Three</title>
+
+<link href="style.css" rel="stylesheet" type="text/css" />
+<link href="c3.css" rel="stylesheet" type="text/css" />
+<meta charset="UTF-8" />
+<meta name="author" content="Rob LeGrand" />
+
+</head><body>
+
+<div class="bigtop">Connect Three</div>
+<p id="instructions">
+   Can you get three in a row before I do?
+</p>
+<table id="gameboard"><tr><td>
+   <input class="drop" id="drop1" type="button" value="Drop here" />
+</td><td>
+   <input class="drop" id="drop2" type="button" value="Drop here" />
+</td><td>
+   <input class="drop" id="drop3" type="button" value="Drop here" />
+</td><td>
+   <input class="drop" id="drop4" type="button" value="Drop here" />
+</td><td>
+   <input class="drop" id="drop5" type="button" value="Drop here" />
+</td></tr><tr><td>
+   <img class="space" id="r5c1" src="empty.gif" />
+</td><td>
+   <img class="space" id="r5c2" src="empty.gif" />
+</td><td>
+   <img class="space" id="r5c3" src="empty.gif" />
+</td><td>
+   <img class="space" id="r5c4" src="empty.gif" />
+</td><td>
+   <img class="space" id="r5c5" src="empty.gif" />
+</td></tr><tr><td>
+   <img class="space" id="r4c1" src="empty.gif" />
+</td><td>
+   <img class="space" id="r4c2" src="empty.gif" />
+</td><td>
+   <img class="space" id="r4c3" src="empty.gif" />
+</td><td>
+   <img class="space" id="r4c4" src="empty.gif" />
+</td><td>
+   <img class="space" id="r4c5" src="empty.gif" />
+</td></tr><tr><td>
+   <img class="space" id="r3c1" src="empty.gif" />
+</td><td>
+   <img class="space" id="r3c2" src="empty.gif" />
+</td><td>
+   <img class="space" id="r3c3" src="empty.gif" />
+</td><td>
+   <img class="space" id="r3c4" src="empty.gif" />
+</td><td>
+   <img class="space" id="r3c5" src="empty.gif" />
+</td></tr><tr><td>
+   <img class="space" id="r2c1" src="empty.gif" />
+</td><td>
+   <img class="space" id="r2c2" src="empty.gif" />
+</td><td>
+   <img class="space" id="r2c3" src="empty.gif" />
+</td><td>
+   <img class="space" id="r2c4" src="empty.gif" />
+</td><td>
+   <img class="space" id="r2c5" src="empty.gif" />
+</td></tr><tr><td>
+   <img class="space" id="r1c1" src="empty.gif" />
+</td><td>
+   <img class="space" id="r1c2" src="empty.gif" />
+</td><td>
+   <img class="space" id="r1c3" src="empty.gif" />
+</td><td>
+   <img class="space" id="r1c4" src="empty.gif" />
+</td><td>
+   <img class="space" id="r1c5" src="empty.gif" />
+</td></tr><tr><td>
+   <div class="hint" id="hint1"></div>
+</td><td>
+   <div class="hint" id="hint2"></div>
+</td><td>
+   <div class="hint" id="hint3"></div>
+</td><td>
+   <div class="hint" id="hint4"></div>
+</td><td>
+   <div class="hint" id="hint5"></div>
+</td></tr></table>
+
+<fieldset class="options-area">
+   <legend>Options</legend>
+   <label for="select-num-columns">Number of columns:&nbsp;<select id="select-num-columns">
+      <option selected="selected">3</option>
+      <option>4</option>
+      <option>5</option>
+   </select></label>
+   <label for="select-num-rows">Number of rows:&nbsp;<select id="select-num-rows">
+      <option>3</option>
+      <option>4</option>
+      <option selected="selected">5</option>
+   </select></label>
+   <label for="select-ai-level">AI level:&nbsp;<select id="select-ai-level">
+      <option>0</option>
+      <option>1</option>
+      <option>2</option>
+      <option selected="selected">3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>7</option>
+      <option>8</option>
+      <option>9</option>
+      <option>10</option>
+      <option>11</option>
+      <option>12</option>
+      <option>13</option>
+      <option>14</option>
+      <option>15</option>
+      <option>16</option>
+      <option>17</option>
+      <option>18</option>
+      <option>19</option>
+      <option>20</option>
+   </select></label>
+   <label><input id="show-hints" type="checkbox" />&nbsp;Show hints</label>
+</fieldset>
+
+<fieldset class="controls-area">
+   <legend>Controls</legend>
+   <input id="new-game" type="button" value="Start new game" />
+</fieldset>
+
+<p id="game-state"></p>
+
+<script src="script.js" type="text/javascript"></script>
+
+</body></html>
