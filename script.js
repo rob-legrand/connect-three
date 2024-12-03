@@ -9,15 +9,19 @@
    var numColumns = parseInt(selectNumColumnsElement.options[selectNumColumnsElement.selectedIndex].value, 10);
    var selectNumRowsElement = document.getElementById('select-num-rows');
    var numRows = parseInt(selectNumRowsElement.options[selectNumRowsElement.selectedIndex].value, 10);
+   var selectAiLevelElement = document.getElementById('select-ai-level');
+   var aiLevel = parseInt(selectAiLevelElement.options[selectAiLevelElement.selectedIndex].value, 10);
+   var showHintsCheckbox = document.getElementById('show-hints');
    var numSpacesToWin = 3;
    var numHumanPlayers = 1;
-   var isFirstPlayersTurn;
+   var playerToMoveNext;
    var dropButtons = [document.getElementById('drop1'), document.getElementById('drop2'), document.getElementById('drop3'), document.getElementById('drop4'), document.getElementById('drop5')];
    var spaces = [[document.getElementById('r1c1'), document.getElementById('r2c1'), document.getElementById('r3c1'), document.getElementById('r4c1'), document.getElementById('r5c1')],
                  [document.getElementById('r1c2'), document.getElementById('r2c2'), document.getElementById('r3c2'), document.getElementById('r4c2'), document.getElementById('r5c2')],
                  [document.getElementById('r1c3'), document.getElementById('r2c3'), document.getElementById('r3c3'), document.getElementById('r4c3'), document.getElementById('r5c3')],
                  [document.getElementById('r1c4'), document.getElementById('r2c4'), document.getElementById('r3c4'), document.getElementById('r4c4'), document.getElementById('r5c4')],
                  [document.getElementById('r1c5'), document.getElementById('r2c5'), document.getElementById('r3c5'), document.getElementById('r4c5'), document.getElementById('r5c5')]];
+   var hints = [document.getElementById('hint1'), document.getElementById('hint2'), document.getElementById('hint3'), document.getElementById('hint4'), document.getElementById('hint5')];
    spaces[0][0].src = 'stags.gif';
    var piece1 = spaces[0][0].src;
    spaces[0][0].src = 'hawks.gif';
@@ -32,6 +36,7 @@
          for (row = 0; row < maxNumRows; row += 1) {
             spaces[column][row].style.display = column < numColumns && row < numRows ? '' : 'none';
          }
+         hints[column].innerHTML = '';
       }
    };
    resizeBoard();
@@ -50,12 +55,20 @@
       }
    };
 
+   var fixShowHints = function () {
+      var column;
+      for (column = 0; column < numColumns; column += 1) {
+         hints[column].style.display = showHintsCheckbox.checked ? '' : 'none';
+      }
+   };
+   fixShowHints();
+
    var dropPieceInColumn = function (column) {
       var row;
       if (column >= 0 && column < numColumns) {
          for (row = 0; row < numRows; row += 1) {
             if (spaces[column][row].src === piece0) {
-               spaces[column][row].src = isFirstPlayersTurn ? piece1 : piece2;
+               spaces[column][row].src = playerToMoveNext === 1 ? piece1 : piece2;
                return true;
             }
          }
@@ -63,77 +76,7 @@
       return false;
    };
 
-   var winnerOnBoard = function () {
-      var column, row, winner, whichSpace;
-      if (numRows >= numSpacesToWin) {
-         for (column = 0; column < numColumns; column += 1) {
-            for (row = 0; row <= numRows - numSpacesToWin; row += 1) {
-               winner = spaces[column][row].src;
-               for (whichSpace = 1; whichSpace < numSpacesToWin; whichSpace += 1) {
-                  if (spaces[column][row + whichSpace].src !== winner) {
-                     winner = piece0;
-                  }
-               }
-               if (winner !== piece0) {
-                  return winner;
-               }
-            }
-         }
-      }
-      if (numColumns >= numSpacesToWin) {
-         for (column = 0; column <= numColumns - numSpacesToWin; column += 1) {
-            for (row = 0; row < numRows; row += 1) {
-               winner = spaces[column][row].src;
-               for (whichSpace = 1; whichSpace < numSpacesToWin; whichSpace += 1) {
-                  if (spaces[column + whichSpace][row].src !== winner) {
-                     winner = piece0;
-                  }
-               }
-               if (winner !== piece0) {
-                  return winner;
-               }
-            }
-         }
-      }
-      if (numRows >= numSpacesToWin && numColumns >= numSpacesToWin) {
-         for (column = 0; column <= numColumns - numSpacesToWin; column += 1) {
-            for (row = 0; row <= numRows - numSpacesToWin; row += 1) {
-               winner = spaces[column][row].src;
-               for (whichSpace = 1; whichSpace < numSpacesToWin; whichSpace += 1) {
-                  if (spaces[column + whichSpace][row + whichSpace].src !== winner) {
-                     winner = piece0;
-                  }
-               }
-               if (winner !== piece0) {
-                  return winner;
-               }
-            }
-         }
-         for (column = 0; column <= numColumns - numSpacesToWin; column += 1) {
-            for (row = numSpacesToWin - 1; row < numRows; row += 1) {
-               winner = spaces[column][row].src;
-               for (whichSpace = 1; whichSpace < numSpacesToWin; whichSpace += 1) {
-                  if (spaces[column + whichSpace][row - whichSpace].src !== winner) {
-                     winner = piece0;
-                  }
-               }
-               if (winner !== piece0) {
-                  return winner;
-               }
-            }
-         }
-      }
-      for (column = 0; column < numColumns; column += 1) {
-         for (row = 0; row < numRows; row += 1) {
-            if (spaces[column][row].src === piece0) {
-               return piece0;
-            }
-         }
-      }
-      return 'draw';
-   };
-
-   var getBoardAsArray = function () {
+   var getBoard = function () {
       var column, row;
       var board = [];
       for (column = 0; column < numColumns; column += 1) {
@@ -149,6 +92,76 @@
          }
       }
       return board;
+   };
+
+   var winnerOnBoard = function (board) {
+      var column, row, winner, whichSpace;
+      if (numRows >= numSpacesToWin) {
+         for (column = 0; column < numColumns; column += 1) {
+            for (row = 0; row <= numRows - numSpacesToWin; row += 1) {
+               winner = board[column][row];
+               for (whichSpace = 1; whichSpace < numSpacesToWin; whichSpace += 1) {
+                  if (board[column][row + whichSpace] !== winner) {
+                     winner = 0;
+                  }
+               }
+               if (winner !== 0) {
+                  return winner;
+               }
+            }
+         }
+      }
+      if (numColumns >= numSpacesToWin) {
+         for (column = 0; column <= numColumns - numSpacesToWin; column += 1) {
+            for (row = 0; row < numRows; row += 1) {
+               winner = board[column][row];
+               for (whichSpace = 1; whichSpace < numSpacesToWin; whichSpace += 1) {
+                  if (board[column + whichSpace][row] !== winner) {
+                     winner = 0;
+                  }
+               }
+               if (winner !== 0) {
+                  return winner;
+               }
+            }
+         }
+      }
+      if (numRows >= numSpacesToWin && numColumns >= numSpacesToWin) {
+         for (column = 0; column <= numColumns - numSpacesToWin; column += 1) {
+            for (row = 0; row <= numRows - numSpacesToWin; row += 1) {
+               winner = board[column][row];
+               for (whichSpace = 1; whichSpace < numSpacesToWin; whichSpace += 1) {
+                  if (board[column + whichSpace][row + whichSpace] !== winner) {
+                     winner = 0;
+                  }
+               }
+               if (winner !== 0) {
+                  return winner;
+               }
+            }
+         }
+         for (column = 0; column <= numColumns - numSpacesToWin; column += 1) {
+            for (row = numSpacesToWin - 1; row < numRows; row += 1) {
+               winner = board[column][row];
+               for (whichSpace = 1; whichSpace < numSpacesToWin; whichSpace += 1) {
+                  if (board[column + whichSpace][row - whichSpace] !== winner) {
+                     winner = 0;
+                  }
+               }
+               if (winner !== 0) {
+                  return winner;
+               }
+            }
+         }
+      }
+      for (column = 0; column < numColumns; column += 1) {
+         for (row = 0; row < numRows; row += 1) {
+            if (board[column][row] === 0) {
+               return 0;
+            }
+         }
+      }
+      return 3;
    };
 
    var makeMoveOnBoard = function (board, player, column) {
@@ -177,12 +190,51 @@
       return false;
    };
 
-   var randomLegalMove = function () {
-      var column;
-      do {
-         column = Math.floor(numColumns * Math.random());
-      } while (spaces[column][numRows - 1].src !== piece0);
-      return column;
+   var minimaxBoardValue = function minimaxBoardValue(board, playerToMoveNext, depth) {
+      var bestOutcome = playerToMoveNext === 1 ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+      var column, outcome;
+      if (winnerOnBoard(board) === 1) {
+         return 1;
+      }
+      if (winnerOnBoard(board) === 2) {
+         return -1;
+      }
+      if (winnerOnBoard(board) === 3) {
+         return 0;
+      }
+      if (depth === 0) {
+         return 0;
+      }
+      for (column = 0; column < numColumns; column += 1) {
+         if (makeMoveOnBoard(board, playerToMoveNext, column)) {
+            outcome = minimaxBoardValue(board, playerToMoveNext === 1 ? 2 : 1, depth - 1);
+            if (playerToMoveNext === 1 ? outcome > bestOutcome : outcome < bestOutcome) {
+               bestOutcome = outcome;
+            }
+            unmakeMoveOnBoard(board, column);
+         }
+      }
+      return bestOutcome;
+   };
+
+   var minimaxMove = function () {
+      var bestColumns = [];
+      var bestOutcome = playerToMoveNext === 1 ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+      var board = getBoard();
+      var column, outcome;
+      for (column = 0; column < numColumns; column += 1) {
+         if (makeMoveOnBoard(board, playerToMoveNext, column)) {
+            outcome = aiLevel > 0 ? minimaxBoardValue(board, playerToMoveNext === 1 ? 2 : 1, aiLevel - 1) : 0;
+            if (playerToMoveNext === 1 ? outcome > bestOutcome : outcome < bestOutcome) {
+               bestColumns = [column];
+               bestOutcome = outcome;
+            } else if (outcome === bestOutcome) {
+               bestColumns.push(column);
+            }
+            unmakeMoveOnBoard(board, column);
+         }
+      }
+      return bestColumns[Math.floor(bestColumns.length * Math.random())];
    };
 
    var newGame = function newGame() {
@@ -191,70 +243,71 @@
          for (row = 0; row < numRows; row += 1) {
             spaces[column][row].src = piece0;
          }
+         hints[column].innerHTML = '';
       }
-      fixDropButtons();
-      isFirstPlayersTurn = false;
-      if (numHumanPlayers === 1) {
-         disableDropButtons();
-         dropPieceInColumn(randomLegalMove());
-         winner = winnerOnBoard();
-         if (winner !== piece0) {
-            disableDropButtons();
-            if (winner === piece1) {
-               window.alert('Player 1 wins.');
-            } else if (winner === piece2) {
-               window.alert('Player 2 wins.');
-            } else {
-               window.alert('It\'s a draw.  Play again?');
-            }
-            newGame();
-         } else {
-            fixDropButtons();
-            isFirstPlayersTurn = !isFirstPlayersTurn;
-         }
-      }
+      playerToMoveNext = 1;
    };
-
    newGame();
 
    var clickFunc = function (column) {
       return function () {
          var winner;
+         var board, val, c;
          dropPieceInColumn(column);
-         winner = winnerOnBoard();
-         if (winner !== piece0) {
+         for (c = 0; c < numColumns; c += 1) {
+            hints[c].innerHTML = '';
+         }
+         winner = winnerOnBoard(getBoard());
+         if (winner > 0) {
             disableDropButtons();
-            if (winner === piece1) {
+            if (winner === 1) {
                window.alert('You win!  Play again?');
-            } else if (winner === piece2) {
+            } else if (winner === 2) {
                window.alert('I win!  Play again?');
             } else {
                window.alert('It\'s a draw.  Play again?');
             }
             newGame();
          } else {
+            playerToMoveNext = playerToMoveNext === 1 ? 2 : 1;
             fixDropButtons();
-            isFirstPlayersTurn = !isFirstPlayersTurn;
             if (numHumanPlayers === 1) {
                disableDropButtons();
-               dropPieceInColumn(randomLegalMove());
-               winner = winnerOnBoard();
-               if (winner !== piece0) {
+               dropPieceInColumn(minimaxMove());
+               winner = winnerOnBoard(getBoard());
+               if (winner > 0) {
                   disableDropButtons();
-                  if (winner === piece1) {
+                  if (winner === 1) {
                      window.alert('You win!  Play again?');
-                  } else if (winner === piece2) {
+                  } else if (winner === 2) {
                      window.alert('I win!  Play again?');
                   } else {
                      window.alert('It\'s a draw.  Play again?');
                   }
                   newGame();
                } else {
+                  playerToMoveNext = playerToMoveNext === 1 ? 2 : 1;
                   fixDropButtons();
-                  isFirstPlayersTurn = !isFirstPlayersTurn;
                }
             }
          }
+         disableDropButtons();
+         for (c = 0; c < numColumns; c += 1) {
+            board = getBoard();
+            if (makeMoveOnBoard(board, playerToMoveNext, c)) {
+               val = minimaxBoardValue(board, playerToMoveNext === 1 ? 2 : 1, numColumns <= 3 ? 15 : numColumns <= 4 ? 9 : 6);
+               if (val < -0.5) {
+                  hints[c].innerHTML = 'L';
+               } else if (val > 0.5) {
+                  hints[c].innerHTML = 'W';
+               } else {
+                  hints[c].innerHTML = 'D';
+               }
+            } else {
+               hints[c].innerHTML = '';
+            }
+         }
+         fixDropButtons();
       };
    };
 
@@ -275,5 +328,10 @@
       newGame();
    };
 
+   selectAiLevelElement.onchange = function () {
+      aiLevel = parseInt(selectAiLevelElement.options[selectAiLevelElement.selectedIndex].value, 10);
+   };
+
+   showHintsCheckbox.onclick = fixShowHints;
    document.getElementById('new-game').onclick = newGame;
 }());
