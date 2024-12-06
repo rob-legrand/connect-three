@@ -26,7 +26,11 @@ document.addEventListener('DOMContentLoaded', function () {
    piece1 = spaces[0][0].src;
    spaces[0][0].src = 'hawks.gif';
    piece2 = spaces[0][0].src;
-   spaces[0][0].src = 'empty.gif';
+   spaces[0][0].src = (
+      matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark.gif'
+      : 'empty.gif'
+   );
    piece0 = spaces[0][0].src;
 
    resizeBoard = function () {
@@ -247,6 +251,8 @@ document.addEventListener('DOMContentLoaded', function () {
          hints[column].innerHTML = '';
       }
       playerToMoveNext = 1;
+      document.getElementById('instructions').innerHTML = 'Can you get three in a row before I do?';
+      fixDropButtons();
    };
    newGame();
 
@@ -261,13 +267,13 @@ document.addEventListener('DOMContentLoaded', function () {
          if (winner > 0) {
             disableDropButtons();
             if (winner === 1) {
-               window.alert('You win!  Play again?');
+               document.getElementById('instructions').innerHTML = 'You win!&nbsp; Play again?';
             } else if (winner === 2) {
-               window.alert('I win!  Play again?');
+               document.getElementById('instructions').innerHTML = 'I win!&nbsp; Play again?';
             } else {
-               window.alert('It\'s a draw.  Play again?');
+               document.getElementById('instructions').innerHTML = 'It\'s a draw.&nbsp; Play again?';
             }
-            newGame();
+            disableDropButtons();
          } else {
             playerToMoveNext = playerToMoveNext === 1 ? 2 : 1;
             fixDropButtons();
@@ -278,13 +284,13 @@ document.addEventListener('DOMContentLoaded', function () {
                if (winner > 0) {
                   disableDropButtons();
                   if (winner === 1) {
-                     window.alert('You win!  Play again?');
+                     document.getElementById('instructions').innerHTML = 'You win!&nbsp; Play again?';
                   } else if (winner === 2) {
-                     window.alert('I win!  Play again?');
+                     document.getElementById('instructions').innerHTML = 'I win!&nbsp; Play again?';
                   } else {
-                     window.alert('It\'s a draw.  Play again?');
+                     document.getElementById('instructions').innerHTML = 'It\'s a draw.&nbsp; Play again?';
                   }
-                  newGame();
+                  disableDropButtons();
                } else {
                   playerToMoveNext = playerToMoveNext === 1 ? 2 : 1;
                   fixDropButtons();
@@ -292,22 +298,25 @@ document.addEventListener('DOMContentLoaded', function () {
             }
          }
          disableDropButtons();
-         for (c = 0; c < numColumns; c += 1) {
-            board = getBoard();
-            if (makeMoveOnBoard(board, playerToMoveNext, c)) {
-               val = minimaxBoardValue(board, playerToMoveNext === 1 ? 2 : 1, numColumns <= 3 ? 15 : numColumns <= 4 ? 9 : 6).minimaxOutcome;
-               if (val < -0.5) {
-                  hints[c].innerHTML = 'L';
-               } else if (val > 0.5) {
-                  hints[c].innerHTML = 'W';
+         winner = winnerOnBoard(getBoard());
+         if (winner === 0) {
+            for (c = 0; c < numColumns; c += 1) {
+               board = getBoard();
+               if (makeMoveOnBoard(board, playerToMoveNext, c)) {
+                  val = minimaxBoardValue(board, playerToMoveNext === 1 ? 2 : 1, numColumns <= 3 ? 15 : numColumns <= 4 ? 9 : 6).minimaxOutcome;
+                  if (val < -0.5) {
+                     hints[c].innerHTML = 'L';
+                  } else if (val > 0.5) {
+                     hints[c].innerHTML = 'W';
+                  } else {
+                     hints[c].innerHTML = 'D';
+                  }
                } else {
-                  hints[c].innerHTML = 'D';
+                  hints[c].innerHTML = '';
                }
-            } else {
-               hints[c].innerHTML = '';
             }
+            fixDropButtons();
          }
-         fixDropButtons();
       };
    };
 

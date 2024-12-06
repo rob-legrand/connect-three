@@ -50,3 +50,14 @@ label {
 ::selection {
    background-color: #ffffff;
 }
+
+@media screen and (prefers-color-scheme: dark) {
+   body {
+      background-color: rgb(0, 15, 30);
+      color: rgb(255, 250, 245);
+   }
+
+   .bigtop {
+      color: rgb(165, 195, 225);
+   }
+}
