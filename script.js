@@ -33,6 +33,22 @@ document.addEventListener('DOMContentLoaded', function () {
    );
    piece0 = spaces[0][0].src;
 
+   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+      var column, row;
+      for (column = 0; column < numColumns; column += 1) {
+         for (row = 0; row < numRows; row += 1) {
+            if (spaces[column][row].src !== piece1 && spaces[column][row].src !== piece2) {
+               spaces[column][row].src = (
+                  matchMedia('(prefers-color-scheme: dark)').matches
+                  ? 'dark.gif'
+                  : 'empty.gif'
+               );
+               piece0 = spaces[column][row].src;
+            }
+         }
+      }
+   });
+
    resizeBoard = function () {
       var column, row;
       for (column = 0; column < maxNumColumns; column += 1) {
