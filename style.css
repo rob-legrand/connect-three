@@ -30,24 +30,24 @@ h1 {
    font-weight: bold;
 }
 
-input.drop {
-   height: 25px;
-   width: 80px;
-}
-
-input.space {
-   height: 60px;
-   width: 80px;
-}
-
 label {
    display: block;
+}
+
+.drop {
+   height: 25px;
+   width: 80px;
 }
 
 .hint {
    color: rgb(60, 60, 60);
    font-weight: bold;
    text-align: center;
+}
+
+.space {
+   height: 60px;
+   width: 80px;
 }
 
 ::selection {
