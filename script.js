@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
          for (row = 0; row < maxNumRows; row += 1) {
             spaces[column][row].style.display = column < numColumns && row < numRows ? '' : 'none';
          }
-         hints[column].innerHTML = '';
+         hints[column].textContent = '';
       }
    };
    resizeBoard();
@@ -264,10 +264,10 @@ document.addEventListener('DOMContentLoaded', function () {
          for (row = 0; row < numRows; row += 1) {
             spaces[column][row].src = piece0;
          }
-         hints[column].innerHTML = '';
+         hints[column].textContent = '';
       }
       playerToMoveNext = 1;
-      document.getElementById('instructions').innerHTML = 'Can you get three in a row before I do?';
+      document.getElementById('instructions').textContent = 'Can you get three in a row before I do?';
       fixDropButtons();
    };
    newGame();
@@ -277,17 +277,17 @@ document.addEventListener('DOMContentLoaded', function () {
          var board, c, val, winner;
          dropPieceInColumn(column);
          for (c = 0; c < numColumns; c += 1) {
-            hints[c].innerHTML = '';
+            hints[c].textContent = '';
          }
          winner = winnerOnBoard(getBoard());
          if (winner > 0) {
             disableDropButtons();
             if (winner === 1) {
-               document.getElementById('instructions').innerHTML = 'You win!&nbsp; Play again?';
+               document.getElementById('instructions').textContent = 'You win!\u00a0 Play again?';
             } else if (winner === 2) {
-               document.getElementById('instructions').innerHTML = 'I win!&nbsp; Play again?';
+               document.getElementById('instructions').textContent = 'I win!\u00a0 Play again?';
             } else {
-               document.getElementById('instructions').innerHTML = 'It\'s a draw.&nbsp; Play again?';
+               document.getElementById('instructions').textContent = 'It\'s a draw.\u00a0 Play again?';
             }
             disableDropButtons();
          } else {
@@ -300,11 +300,11 @@ document.addEventListener('DOMContentLoaded', function () {
                if (winner > 0) {
                   disableDropButtons();
                   if (winner === 1) {
-                     document.getElementById('instructions').innerHTML = 'You win!&nbsp; Play again?';
+                     document.getElementById('instructions').textContent = 'You win!\u00a0 Play again?';
                   } else if (winner === 2) {
-                     document.getElementById('instructions').innerHTML = 'I win!&nbsp; Play again?';
+                     document.getElementById('instructions').textContent = 'I win!\u00a0 Play again?';
                   } else {
-                     document.getElementById('instructions').innerHTML = 'It\'s a draw.&nbsp; Play again?';
+                     document.getElementById('instructions').textContent = 'It\'s a draw.\u00a0 Play again?';
                   }
                   disableDropButtons();
                } else {
@@ -321,14 +321,14 @@ document.addEventListener('DOMContentLoaded', function () {
                if (makeMoveOnBoard(board, playerToMoveNext, c)) {
                   val = minimaxBoardValue(board, playerToMoveNext === 1 ? 2 : 1, numColumns <= 3 ? 15 : numColumns <= 4 ? 9 : 6).minimaxOutcome;
                   if (val < -0.5) {
-                     hints[c].innerHTML = 'L';
+                     hints[c].textContent = 'L';
                   } else if (val > 0.5) {
-                     hints[c].innerHTML = 'W';
+                     hints[c].textContent = 'W';
                   } else {
-                     hints[c].innerHTML = 'D';
+                     hints[c].textContent = 'D';
                   }
                } else {
-                  hints[c].innerHTML = '';
+                  hints[c].textContent = '';
                }
             }
             fixDropButtons();
