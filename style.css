@@ -2,6 +2,14 @@
 
 @import url(/fonts/fonts.css);
 
+:root {
+   --geometric:
+      "Century Gothic", Futura, Avenir, Outfit, "League Spartan", "Twentieth Century",
+      Neuzeit, Sofia, "Harmonia Sans", "Museo Sans", Gotham, Radikal, Fredoka,
+      Railway, "Atkinson Hyperlegible", "IBM Plex Sans", Overpass, Rubik,
+      Montserrat, Roboto, Geneva, Tahoma, Verdana, Helvetica, sans-serif;
+}
+
 html {
    box-sizing: border-box;
 }
