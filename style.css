@@ -35,7 +35,7 @@ fieldset, table#gameboard {
 
 h1 {
    color: rgb(225, 165, 195);
-   font-family: Railway, Futura, "Century Gothic", Geneva, Tahoma, Verdana, sans-serif;
+   font-family: var(--geometric);
    font-size: 250%;
    font-weight: bold;
 }
